@@ -13,3 +13,11 @@ Create a `settings.yml` with the following contents:
 
 - Activate alarm: `*` key
 - Deactivate alarm: enter PIN followed by `#` key
+
+Run it:
+
+    sudo python pad.py
+
+## Components
+
+- Sparkfun COM-08653 12-key keypad

@@ -30,6 +30,15 @@ def deactivate_alarm():
 	return
 
 
+# pin layout (1 is the left most pin on the keypad):
+# 1: GPIO18
+# 2: GPIO17
+# 3: GPIO27
+# 4: GPIO23
+# 5: GPIO22
+# 6: GPIO24
+# 7: GPIO25
+
 rows = [17, 25, 24, 23]
 cols = [27, 18, 22]
 keys = [
