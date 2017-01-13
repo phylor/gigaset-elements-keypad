@@ -1,8 +1,34 @@
 import sys
 import RPi.GPIO as GPIO
 import time
+import yaml
+from subprocess import call
 
 GPIO.setmode(GPIO.BCM)
+
+GIGASET_USER = ''
+GIGASET_PASSWORD = ''
+PIN = ''
+
+stream = open('settings.yml', 'r')
+settings = yaml.load(stream)
+for k,v in settings.items():
+	if k == 'user':
+		GIGASET_USER = v
+	elif k == 'password':
+		GIGASET_PASSWORD = v
+	elif k == 'pin':
+		PIN = v
+
+
+def activate_alarm():
+	call(['gigasetelements-cli', '-u', GIGASET_USER, '-p', GIGASET_PASSWORD, '-m', 'away'])
+	return
+
+def deactivate_alarm():
+	call(['gigasetelements-cli', '-u', GIGASET_USER, '-p', GIGASET_PASSWORD, '-m', 'home'])
+	return
+
 
 rows = [17, 25, 24, 23]
 cols = [27, 18, 22]
@@ -34,10 +60,13 @@ while True:
 	key = get_key()
 	if key == '#':
 		print('')
-		print('code: ' + code)
+		if code == str(PIN):
+			print('Deactivating alarm..')
+			deactivate_alarm()
 		code = ''
 	elif key == '*':
-		print('arming')
+		print('Activating alarm..')
+		activate_alarm()
 		code = ''
 	elif key:
 		code = code + key
