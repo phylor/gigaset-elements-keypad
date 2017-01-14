@@ -2,7 +2,8 @@ import sys
 import RPi.GPIO as GPIO
 import time
 import yaml
-from subprocess import call
+import display
+from gigaset_elements import GigasetElements
 
 GPIO.setmode(GPIO.BCM)
 
@@ -21,13 +22,6 @@ for k,v in settings.items():
 		PIN = v
 
 
-def activate_alarm():
-	call(['gigasetelements-cli', '-u', GIGASET_USER, '-p', GIGASET_PASSWORD, '-m', 'away'])
-	return
-
-def deactivate_alarm():
-	call(['gigasetelements-cli', '-u', GIGASET_USER, '-p', GIGASET_PASSWORD, '-m', 'home'])
-	return
 
 
 # pin layout (1 is the left most pin on the keypad):
@@ -64,22 +58,36 @@ def get_key():
 	return key
 
 code = ''
+lcd = display.Display()
+gigaset = GigasetElements(GIGASET_USER, GIGASET_PASSWORD)
+
+def show_status():
+	status = gigaset.alarm_status()
+	lcd.clear()
+	lcd.message('Alarm\n' + status)
+
+show_status()
 
 while True:
 	key = get_key()
 	if key == '#':
-		print('')
+		lcd.clear()
 		if code == str(PIN):
-			print('Deactivating alarm..')
-			deactivate_alarm()
+			lcd.message('Alarm\ndeactivating..')
+			gigaset.deactivate_alarm()
+		
 		code = ''
+		show_status()
 	elif key == '*':
-		print('Activating alarm..')
-		activate_alarm()
+		lcd.clear()
+		lcd.message('Alarm\nactivating..')
+		gigaset.activate_alarm()
 		code = ''
+		show_status()
 	elif key:
 		code = code + key
-		sys.stdout.write(key)
-		sys.stdout.flush()
+		lcd.clear()
+		lcd.message(code)
+	
 	time.sleep(0.3)
 
