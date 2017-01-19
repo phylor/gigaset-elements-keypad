@@ -1,3 +1,5 @@
+![Breadboard](https://raw.githubusercontent.com/phylor/gigaset-elements-keypad/master/docs/breadboard.png)
+
 ## Installation
 
     sudo pip install RPi.GPIO
