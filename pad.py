@@ -5,6 +5,7 @@ import yaml
 import display
 import led
 from gigaset_elements import GigasetElements
+from threading import Timer
 
 GPIO.setmode(GPIO.BCM)
 
@@ -73,8 +74,14 @@ def show_status():
 	elif status == 'home':
 		led.green()
 
+def start_status_timer():
+	show_status()
+	alarm_status_timer = Timer(5 * 60, start_status_timer)
+	alarm_status_timer.start()
+	
 led.orange()
-show_status()
+start_status_timer()
+
 
 while True:
 	key = get_key()
