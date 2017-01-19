@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 import time
 import yaml
 import display
+import led
 from gigaset_elements import GigasetElements
 
 GPIO.setmode(GPIO.BCM)
@@ -60,12 +61,19 @@ def get_key():
 code = ''
 lcd = display.Display()
 gigaset = GigasetElements(GIGASET_USER, GIGASET_PASSWORD)
+led = led.Led()
 
 def show_status():
 	status = gigaset.alarm_status()
 	lcd.clear()
 	lcd.message('Alarm\n' + status)
+	
+	if status == 'away':
+		led.red()
+	elif status == 'home':
+		led.green()
 
+led.orange()
 show_status()
 
 while True:
@@ -74,6 +82,7 @@ while True:
 		lcd.clear()
 		if code == str(PIN):
 			lcd.message('Alarm\ndeactivating..')
+			led.orange()
 			gigaset.deactivate_alarm()
 		
 		code = ''
@@ -81,6 +90,7 @@ while True:
 	elif key == '*':
 		lcd.clear()
 		lcd.message('Alarm\nactivating..')
+		led.orange()
 		gigaset.activate_alarm()
 		code = ''
 		show_status()
